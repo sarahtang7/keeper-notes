@@ -1,35 +1,40 @@
+require('dotenv').config();
+
 const express = require('express')
 const app = express()
+app.use(express.json());
+const mongoose = require('mongoose')
 
-const notes = [
-    {
-      key: 1,
-      title: "Delegation",
-      content:
-        "Q. How many programmers does it take to change a light bulb? A. None – It’s a hardware problem"
-    },
-    {
-      key: 2,
-      title: "Loops",
-      content:
-        "How to keep a programmer in the shower forever. Show him the shampoo bottle instructions: Lather. Rinse. Repeat."
-    },
-    {
-      key: 3,
-      title: "Arrays",
-      content:
-        "Q. Why did the programmer quit his job? A. Because he didn't get arrays."
-    },
-    {
-      key: 4,
-      title: "Hardware vs. Software",
-      content:
-        "What's the difference between hardware and software? You can hit your hardware with a hammer, but you can only curse at your software."
+const uri = process.env.MONGODB_URI;
+
+// connect to mongoDB
+async function connect() {
+    try {
+        await mongoose.connect(uri);
+        console.log("Connected to MongoDB!");
+    } catch (error) {
+        console.error(error);
     }
-  ];
+}
 
-app.get("/api", (req, res) => {
-    res.json(notes)
+connect();
+
+// define note schema
+const noteSchema = new mongoose.Schema({
+    title: String,
+    content: String
+});
+
+const Note = mongoose.model('Note', noteSchema);
+
+app.post("/addNote", async (req, res) => {
+    await Note.insertMany([req.body]);
+    res.json('Note added');
+})
+
+app.get("/notes", async (req, res) => {
+    const allNotes = await Note.find({});
+    res.json(allNotes);
 })
 
 app.listen(5000, () => {console.log("Server running on port 5000")})

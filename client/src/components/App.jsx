@@ -5,28 +5,44 @@ import NewNote from "./NewNote";
 import Note from "./Note";
 
 function App() {
-  const [notesArr, setNotesArr] = useState([{}])
+  const [notesArr, setNotesArr] = useState([])
 
   useEffect(() => {
-    fetch("/api").then(
+    getNotes();
+  }, [])
+
+  function getNotes() {
+    fetch("/notes").then(
       response => response.json()
     ).then(
       data => {
         setNotesArr(data)
       }
     )
-  }, [])
+  }
 
   function addNote(newNote) {
-    setNotesArr((prevNotes) => {
-      return [...prevNotes, newNote];
-    });
+    console.log(newNote)
+    fetch("/addNote", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newNote)
+    }).then(
+      response => response.json()
+    ).then (
+      data => {
+        console.log(data);
+        getNotes();
+      }
+    )
   }
 
   function deleteNote(noteID) {
     setNotesArr((prevNotes) => {
       return prevNotes.filter((item, index) => {
-        return index != noteID;
+        return index !== noteID;
       });
     });
   }
