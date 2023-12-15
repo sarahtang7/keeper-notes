@@ -37,4 +37,9 @@ app.get("/notes", async (req, res) => {
     res.json(allNotes);
 })
 
+app.delete("/deleteNote/:id", async (req, res) => {
+    await Note.findByIdAndDelete(req.params.id);
+    res.json('Note deleted');
+});
+
 app.listen(5000, () => {console.log("Server running on port 5000")})

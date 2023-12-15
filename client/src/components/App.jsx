@@ -40,24 +40,27 @@ function App() {
   }
 
   function deleteNote(noteID) {
-    setNotesArr((prevNotes) => {
-      return prevNotes.filter((item, index) => {
-        return index !== noteID;
-      });
-    });
+    fetch(`/deleteNote/${noteID}`, {
+      method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(() => {
+      getNotes();
+    })
+    .catch(error => console.error('Error:', error));
   }
 
   return (
     <div>
       <Header />
       <NewNote onAdd={addNote} />
-      {notesArr.map((item, index) => {
+      {notesArr.map((note) => {
         return (
           <Note
-            key={index}
-            id={index}
-            title={item.title}
-            content={item.content}
+            key={note._id}
+            id={note._id}
+            title={note.title}
+            content={note.content}
             onDelete={deleteNote}
           />
         );
