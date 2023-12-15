@@ -37,20 +37,22 @@ function NoteArea(props) {
 
   return (
     <div>
-      <form>
+      <form onSubmit={submitNote}>
         <input
           name="title"
           placeholder="Title"
           onChange={handleChange}
           value={note.title}
+          required
         />
         <textarea
           name="content"
           placeholder="Take a note..."
           onChange={handleChange}
           value={note.content}
+          required
         />
-        <button onClick={submitNote}>Add</button>
+        <button type="submit">Add</button>
       </form>
     </div>
   );
